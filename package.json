@@ -1,0 +1,15 @@
+{
+  "name": "nodejs-mongo-service",
+  "version": "1.0.0",
+  "description": "A Node.js service for task management system",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "mongoose": "^8.7.2",
+    "dotenv": "^16.4.5"
+  }
+}
