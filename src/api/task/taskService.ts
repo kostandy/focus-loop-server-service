@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
   title: {
@@ -7,8 +7,8 @@ const taskSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['not_started', 'in_progress', 'completed'],
-    default: 'not_started',
+    enum: ["not_started", "in_progress", "completed"],
+    default: "not_started",
   },
   description: String,
   history: Array,
@@ -23,4 +23,4 @@ const taskSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('Task', taskSchema);
+export default mongoose.model("Task", taskSchema);

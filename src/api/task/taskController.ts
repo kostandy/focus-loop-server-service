@@ -1,4 +1,4 @@
-import Task from "../models/Task.js";
+import Task from "./taskService.js";
 
 // Messages
 const messages = {
@@ -20,8 +20,8 @@ export const getTasks = async (req, res) => {
   const { cursor, limit, sortBy, sortOrder } = req.query;
   const query = cursor ? { _id: { $gt: cursor } } : {};
   const options = {
-    limit: parseInt(limit) || 10,
-    sort: { [sortBy || 'createdAt']: sortOrder === 'desc' ? -1 : 1 },
+    limit: Number.parseInt(limit) || 10,
+    sort: { [sortBy || "createdAt"]: sortOrder === "desc" ? -1 : 1 },
   };
 
   try {
@@ -39,9 +39,7 @@ export const getTask = async (req, res) => {
   try {
     const task = await Task.findById(id);
     if (!task) {
-      return res
-        .status(statusCodes.notFound)
-        .json({ message: messages.taskNotFound });
+      return res.status(statusCodes.notFound).json({ message: messages.taskNotFound });
     }
     res.status(statusCodes.ok).json(task);
   } catch (error) {
@@ -71,12 +69,10 @@ export const updateTask = async (req, res) => {
     const updatedTask = await Task.findByIdAndUpdate(
       id,
       { title, status, description, history, dueDate, updatedAt: Date.now() },
-      { new: true }
+      { new: true },
     );
     if (!updatedTask) {
-      return res
-        .status(statusCodes.notFound)
-        .json({ message: messages.taskNotFound });
+      return res.status(statusCodes.notFound).json({ message: messages.taskNotFound });
     }
     res.status(statusCodes.ok).json(updatedTask);
   } catch (error) {
@@ -89,9 +85,7 @@ export const deleteTask = async (req, res) => {
   try {
     const deletedTask = await Task.findByIdAndDelete(id);
     if (!deletedTask) {
-      return res
-        .status(statusCodes.notFound)
-        .json({ message: messages.taskNotFound });
+      return res.status(statusCodes.notFound).json({ message: messages.taskNotFound });
     }
     res.status(statusCodes.ok).json({ message: messages.taskDeleted });
   } catch (error) {
