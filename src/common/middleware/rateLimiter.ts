@@ -9,7 +9,13 @@ const rateLimiter = rateLimit({
   message: "Too many requests, please try again later.",
   standardHeaders: true,
   windowMs: 15 * 60 * env.COMMON_RATE_LIMIT_WINDOW_MS,
-  keyGenerator: (req: Request) => req.ip as string,
+  skip: (req: Request) => {
+    const userAgent = req.headers["user-agent"] || "";
+    return userAgent.includes("Health-Checker");
+  },
+  keyGenerator: (req: Request) => {
+    return `${req.ip}-${req.headers["user-agent"]}` as string;
+  },
 });
 
 export default rateLimiter;
