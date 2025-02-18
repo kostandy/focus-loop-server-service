@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "baseUrl": ".",
+    // Node.js 20 LTS (Hydrogen) fully supports ES2022
+    // Using ES2022 instead of ESNext for better stability and compatibility
+    "target": "ES2022",
+    // Node.js has native ESM support, CommonJS is legacy
+    "module": "NodeNext",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["*"]
     },
-    "moduleResolution": "Node",
+    "lib": ["es2023"],
     "outDir": "dist",
     "importsNotUsedAsValues": "remove",
     "strict": true,
@@ -15,6 +18,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*"],
+  "include": ["**/*"],
   "exclude": ["node_modules"]
 }
