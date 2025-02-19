@@ -53,9 +53,10 @@
   "tsup": {
     "entry": ["src", "!src/**/__tests__/**", "!src/**/*.test.*"],
     "target": "node22",
+    "format": ["esm"],
     "minify": true,
     "splitting": false,
-    "dts": false,
+    "dts": true,
     "treeshake": true,
     "sourcemap": false,
     "clean": true
