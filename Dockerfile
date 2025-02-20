@@ -1,22 +1,30 @@
-FROM node:lts-alpine
+# Base stage for shared settings
+FROM node:lts-alpine AS base
 
-# Create app directory
 WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json
 COPY package*.json ./
+COPY --chown=node:node ./src ./src
 
-# Install app dependencies
+# Development stage
+FROM base AS development
+ENV NODE_ENV=development
+RUN npm install
+USER node
+CMD ["node", "index.js"]
+
+# Build stage
+FROM base AS build
 RUN npm ci
-
-# Bundle app source
-COPY . .
-
-# Build the TypeScript files
 RUN npm run build
 
-# Expose port 3073
-EXPOSE 3073
+# Production stage
+FROM base AS production
+ENV NODE_ENV=production
+RUN npm prune --production \
+    && npm cache clean --force \
+    && chown -R node:node /usr/src/app
 
-# Start the app
-CMD npm run start
+USER node
+RUN rm -rf src/
+
+CMD ["node", "./dist/index.cjs"]

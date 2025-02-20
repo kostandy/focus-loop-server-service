@@ -1,0 +1,50 @@
+name: focus-loop
+
+services:
+  server:
+    container_name: focus-loop-server
+    init: true
+    build:
+      dockerfile: ./Dockerfile
+      target: ${NODE_ENV:-development}
+    ports:
+      - "${SERVER_PORT:-3073}:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - MONGO_URI=mongodb://${MONGODB_INITDB_ROOT_USERNAME}:${MONGODB_INITDB_ROOT_PASSWORD}@mongo/
+    volumes:
+      - .:/usr/src/app:delegated
+      - /usr/src/app/node_modules
+    depends_on:
+      mongo:
+        condition: service_healthy
+    profiles:
+      - backend
+    command: ["npm", "run", "dev"]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -A 'Health-Checker' http://localhost:3000/health-check || exit 1"]
+      interval: ${HEALTHCHECK_INTERVAL:-60s}
+      timeout: ${HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${HEALTHCHECK_RETRIES:-5}
+
+  mongo:
+    container_name: focus-loop-mongo
+    image: mongodb/mongodb-community-server:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGODB_INITDB_ROOT_USERNAME: ${MONGODB_INITDB_ROOT_USERNAME}
+      MONGODB_INITDB_ROOT_PASSWORD: ${MONGODB_INITDB_ROOT_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "bash", "-c", "echo 'db.adminCommand(\"ping\")' | mongo localhost:27017 --quiet"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+volumes:
+  mongodb_data:
+    # Use named volume to cache MongoDB data
+    driver: local
