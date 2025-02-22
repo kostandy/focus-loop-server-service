@@ -3,7 +3,7 @@ import type { z } from "zod";
 
 import { ServiceResponseSchema } from "@/common/models/serviceResponse.js";
 
-export function createApiResponse(schema: z.ZodTypeAny, description: string, statusCode = StatusCodes.OK) {
+export const createApiResponse = (schema: z.ZodTypeAny, description: string, statusCode = StatusCodes.OK) => {
   return {
     [statusCode]: {
       description,
@@ -14,7 +14,7 @@ export function createApiResponse(schema: z.ZodTypeAny, description: string, sta
       },
     },
   };
-}
+};
 
 // Use if you want multiple responses for a single endpoint
 
