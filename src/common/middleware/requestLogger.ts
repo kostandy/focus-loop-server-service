@@ -24,6 +24,19 @@ type PinoCustomProps = {
   responseBody: unknown;
 };
 
+const responseBodyMiddleware: RequestHandler = (_req, res, next) => {
+  const isNotProduction = !env.isProduction;
+  if (isNotProduction) {
+    const originalSend = res.send;
+    res.send = (content) => {
+      res.locals.responseBody = content;
+      res.send = originalSend;
+      return originalSend.call(res, content);
+    };
+  }
+  next();
+};
+
 const requestLogger = (options?: Options): RequestHandler[] => {
   const pinoOptions: Options = {
     enabled: env.isProduction,
@@ -53,19 +66,6 @@ const customProps = (req: Request, res: Response): PinoCustomProps => ({
   error: res.locals.err,
   responseBody: res.locals.responseBody,
 });
-
-const responseBodyMiddleware: RequestHandler = (_req, res, next) => {
-  const isNotProduction = !env.isProduction;
-  if (isNotProduction) {
-    const originalSend = res.send;
-    res.send = (content) => {
-      res.locals.responseBody = content;
-      res.send = originalSend;
-      return originalSend.call(res, content);
-    };
-  }
-  next();
-};
 
 const customLogLevel = (_req: IncomingMessage, res: ServerResponse<IncomingMessage>, err?: Error): LevelWithSilent => {
   if (err || res.statusCode >= StatusCodes.INTERNAL_SERVER_ERROR) return LogLevel.Error;

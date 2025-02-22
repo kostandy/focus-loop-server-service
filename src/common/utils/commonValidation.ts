@@ -7,4 +7,6 @@ export const commonValidations = {
     .transform(Number)
     .refine((num) => num > 0, "ID must be a positive number"),
   // ... other common validations
+  // TODO: Add more common validations here
+  // TODO: Add validation for wallet address
 };

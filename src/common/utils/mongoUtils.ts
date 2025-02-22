@@ -1,15 +1,22 @@
 import mongoose, { type Mongoose } from "mongoose";
-import { env } from "./envConfig";
+
+import { env } from "@/common/utils/envConfig.js";
+import { logger } from "@/server.js";
 
 export const connectMongoDB = async (): Promise<Mongoose> => {
   try {
-    console.debug("MONGO_URI", env.MONGO_URI);
+    logger.debug("MONGO_URI", env.MONGO_URI);
     const defaultConnection = await mongoose.connect(env.MONGO_URI);
-    console.log("MongoDB connected");
+    logger.info("MongoDB connected");
 
     return defaultConnection;
   } catch (error: unknown) {
-    console.error("MongoDB connection failed:", (error as Error).message);
+    logger.error("MongoDB connection failed:", (error as Error).message);
     process.exit(1);
   }
+};
+
+export const shutDownMongoDB = async (): Promise<void> => {
+  await mongoose.connection.close();
+  logger.info("MongoDB connection closed");
 };
